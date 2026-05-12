@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💜 Iri's Bachelorette Jeopardy 💜</title>
+<title>Iri's Bachelorette Jeopardy</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;700;800&display=swap');
 
@@ -26,10 +26,8 @@
 
   body {
     font-family: 'Inter', -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    overflow-x: hidden;
+    background: var(--bg); color: var(--text);
+    height: 100vh; overflow: hidden;
   }
 
   /* Sparkle background */
@@ -50,7 +48,11 @@
     z-index: 0;
   }
 
-  .app { position: relative; z-index: 1; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .app {
+    position: relative; z-index: 1; padding: 16px;
+    max-width: 100%; margin: 0 auto;
+    height: 100vh; display: flex; flex-direction: column;
+  }
 
   /* ── Header ── */
   .game-header {
@@ -82,8 +84,9 @@
     display: flex;
     justify-content: center;
     gap: 20px;
-    margin-bottom: 32px;
+    padding: 12px 0 4px;
     flex-wrap: wrap;
+    flex-shrink: 0;
   }
   .team-score {
     background: var(--surface);
@@ -156,7 +159,14 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 8px;
-    margin-bottom: 32px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .board-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .category-header {
@@ -164,7 +174,7 @@
     border-radius: 12px;
     padding: 16px 8px;
     text-align: center;
-    font-size: 13px;
+    font-size: 24px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -180,14 +190,15 @@
     background: var(--surface);
     border: 1px solid rgba(180,160,214,0.2);
     border-radius: 12px;
-    padding: 20px;
+    padding: 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 80px;
+    flex: 1;
+    min-height: 0;
     font-size: 28px;
     font-weight: 800;
     color: var(--gold);
@@ -203,10 +214,10 @@
   .cell.used {
     background: rgba(26,16,37,0.6);
     color: rgba(255,215,0,0.15);
-    cursor: default;
+    cursor: pointer;
     border-color: rgba(180,160,214,0.08);
   }
-  .cell.used:hover { transform: none; box-shadow: none; background: rgba(26,16,37,0.6); }
+  .cell.used:hover { transform: none; box-shadow: none; background: rgba(26,16,37,0.7); }
 
   /* ── Modal ── */
   .modal-overlay {
@@ -228,9 +239,11 @@
     background: var(--surface);
     border: 2px solid var(--sour-dark);
     border-radius: 20px;
-    padding: 48px;
-    max-width: 700px;
-    width: 90%;
+    padding: 56px 64px;
+    max-width: 900px;
+    width: 92%;
+    max-height: 88vh;
+    overflow-y: auto;
     text-align: center;
     transform: scale(0.9);
     transition: transform 0.3s;
@@ -239,24 +252,24 @@
   .modal-overlay.show .modal { transform: scale(1); }
 
   .modal-category {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--sour-pink);
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
   .modal-amount {
-    font-size: 48px;
+    font-size: 56px;
     font-weight: 800;
     color: var(--gold);
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   .modal-question {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 600;
     line-height: 1.5;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
     color: var(--text);
   }
   .modal-answer {
@@ -308,6 +321,11 @@
     padding: 8px 16px;
   }
   .btn-award:hover { background: rgba(255,215,0,0.1); }
+  .btn-award.selected {
+    background: rgba(255,215,0,0.2);
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(255,215,0,0.3);
+  }
 
   /* ── Confetti ── */
   @keyframes fall {
@@ -324,7 +342,56 @@
     pointer-events: none;
   }
 
-  /* ── Responsive ── */
+  /* ── Floating heads ── */
+  .floating-heads {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 100px;
+    pointer-events: none;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 40px 8px;
+  }
+  .floating-head {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    opacity: 0.85;
+    animation: bobble1 3s ease-in-out infinite;
+  }
+  .heads-left, .heads-right {
+    display: flex;
+    gap: 100px;
+    align-items: flex-end;
+  }
+  .floating-head:nth-child(1) { animation-delay: 0s; }
+  .floating-head:nth-child(2) { animation-delay: 0.4s; width: 70px; height: 70px; }
+  .floating-head:nth-child(3) { animation-delay: 0.8s; width: 75px; height: 75px; }
+
+  @keyframes bobble1 {
+    0%, 100% { transform: translateY(0) rotate(-15deg); }
+    30% { transform: translateY(-65px) rotate(25deg); }
+    70% { transform: translateY(-30px) rotate(-10deg); }
+  }
+  @keyframes bobble2 {
+    0%, 100% { transform: translateY(-10px) rotate(12deg); }
+    40% { transform: translateY(-75px) rotate(-28deg); }
+    80% { transform: translateY(-35px) rotate(18deg); }
+  }
+  @keyframes bobble3 {
+    0%, 100% { transform: translateY(-5px) rotate(-20deg); }
+    25% { transform: translateY(-70px) rotate(30deg); }
+    60% { transform: translateY(-25px) rotate(-12deg); }
+  }
+
+  .heads-left .floating-head:nth-child(1) { animation: bobble1 8s ease-in-out infinite; animation-delay: 0s; }
+  .heads-left .floating-head:nth-child(2) { animation: bobble2 7.5s ease-in-out infinite; animation-delay: 0.3s; }
+  .heads-left .floating-head:nth-child(3) { animation: bobble3 9s ease-in-out infinite; animation-delay: 0.7s; }
+  .heads-right .floating-head:nth-child(1) { animation: bobble3 7.8s ease-in-out infinite; animation-delay: 0.5s; }
+  .heads-right .floating-head:nth-child(2) { animation: bobble1 8.5s ease-in-out infinite; animation-delay: 0.2s; }
+  .heads-right .floating-head:nth-child(3) { animation: bobble2 7.2s ease-in-out infinite; animation-delay: 0.8s; }
   @media (max-width: 768px) {
     .game-header h1 { font-size: 32px; }
     .board { gap: 4px; }
@@ -339,14 +406,23 @@
 </head>
 <body>
 
-<div class="app">
-  <div class="game-header">
-    <h1>💜 Iri's Jeopardy 💜</h1>
-    <div class="subtitle">✨ Bachelorette Edition ✨</div>
+<div class="floating-heads">
+  <div class="heads-left">
+    <img class="floating-head" src="head1.png" />
+    <img class="floating-head" src="head2.png" />
+    <img class="floating-head" src="head3.png" />
   </div>
+  <div class="heads-right">
+    <img class="floating-head" src="head3.png" />
+    <img class="floating-head" src="head2.png" />
+    <img class="floating-head" src="head1.png" />
+  </div>
+</div>
 
-  <div class="scoreboard" id="scoreboard"></div>
+<div class="app">
+
   <div class="board" id="board"></div>
+  <div class="scoreboard" id="scoreboard"></div>
 </div>
 
 <div class="modal-overlay" id="modal">
@@ -370,23 +446,52 @@ const CATEGORIES = [
 
 const VALUES = [100, 200, 300, 400, 500];
 
-// Questions data: [category][value] = { q, a }
-// Placeholder — fill in later!
+// Per-category value lists (AI Boiz has 8 × $100)
+const CATEGORY_VALUES = {};
+CATEGORIES.forEach(cat => {
+  if (cat === 'AI Boiz') {
+    CATEGORY_VALUES[cat] = [100, 100, 100, 100, 100, 100, 100, 100];
+  } else {
+    CATEGORY_VALUES[cat] = VALUES;
+  }
+});
+
+// Questions data: [category][key] = { q, a }
+// For AI Boiz, keys are "AI Boiz-0" through "AI Boiz-7"
+// For others, keys are "Category-100" through "Category-500"
 const QUESTIONS = {};
 CATEGORIES.forEach(cat => {
   QUESTIONS[cat] = {};
-  VALUES.forEach(val => {
-    QUESTIONS[cat][val] = {
-      q: `$${val} question coming soon! 💜`,
+  const vals = CATEGORY_VALUES[cat];
+  vals.forEach((val, idx) => {
+    const qKey = (cat === 'AI Boiz') ? idx : val;
+    QUESTIONS[cat][qKey] = {
+      q: `$${val} question coming soon!`,
       a: 'Answer TBD'
     };
   });
 });
 
+// Override specific questions
+QUESTIONS['GUESS THE SONG'][100] = { q: 'Name that song! 🎵', a: 'All I Want — Olivia Rodrigo' };
+
+QUESTIONS['T-wizzle or T-swizzle'][100] = { q: 'This Taylor Swift album was re-recorded and re-released as "Taylor\'s Version" in 2021, featuring a 10-minute version of a beloved heartbreak anthem.', a: 'Red' };
+QUESTIONS['T-wizzle or T-swizzle'][200] = { q: 'Taiwan\'s official name is the Republic of China. True or false: Taiwan is currently a member of the United Nations under that name.', a: 'False — Taiwan lost its UN seat to the People\'s Republic of China in 1971.' };
+QUESTIONS['T-wizzle or T-swizzle'][300] = { q: 'Taiwan is the world\'s leading producer of this essential tech component, made by TSMC, that powers nearly every modern smartphone and computer.', a: 'Semiconductor chips (microchips / processors)' };
+QUESTIONS['T-wizzle or T-swizzle'][400] = { q: 'Taylor Swift became the first artist to simultaneously hold the top 10 spots on the Billboard Hot 100. Which album caused this chart sweep?', a: 'Midnights (2022)' };
+QUESTIONS['T-wizzle or T-swizzle'][500] = { q: 'Taylor Swift holds the record for the most Grammy Awards won by any artist in history. How many Grammys does she currently hold?', a: '14' };
+
+// AI Boiz — image questions (who is this?)
+const AI_BOIZ_IMAGES = ['aiboiz1.png','aiboiz2.png','aiboiz3.png','aiboiz4.png','aiboiz5.png','aiboiz6.png','aiboiz7.png','aiboiz8.png'];
+const AI_BOIZ_ANSWERS = ['Itsumi','Nan','Evi','Andrea','Angie','Iri','Hanako','Allison'];
+AI_BOIZ_IMAGES.forEach((img, i) => {
+  QUESTIONS['AI Boiz'][i] = { q: 'who dis', a: AI_BOIZ_ANSWERS[i], image: img };
+});
+
 const teams = [
-  { name: 'Team 1 💜', score: 0 },
-  { name: 'Team 2 💗', score: 0 },
-  { name: 'Team 3 ✨', score: 0 },
+  { name: 'Team 1', score: 0 },
+  { name: 'Team 2', score: 0 },
+  { name: 'Team 3', score: 0 },
 ];
 
 const usedCells = new Set();
@@ -422,45 +527,76 @@ function renderBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
 
-  // Category headers
   CATEGORIES.forEach(cat => {
+    const col = document.createElement('div');
+    col.className = 'board-column';
+
     const h = document.createElement('div');
     h.className = 'category-header';
     h.textContent = cat;
-    board.appendChild(h);
-  });
+    col.appendChild(h);
 
-  // Value cells
-  VALUES.forEach(val => {
-    CATEGORIES.forEach(cat => {
+    const vals = CATEGORY_VALUES[cat];
+    vals.forEach((val, idx) => {
+      const qKey = (cat === 'AI Boiz') ? idx : val;
+      const cellKey = `${cat}-${qKey}`;
       const cell = document.createElement('div');
-      const key = `${cat}-${val}`;
-      cell.className = 'cell' + (usedCells.has(key) ? ' used' : '');
+      cell.className = 'cell' + (usedCells.has(cellKey) ? ' used' : '');
       cell.textContent = `$${val}`;
       cell.onclick = () => {
-        if (!usedCells.has(key)) openQuestion(cat, val, key);
+        if (usedCells.has(cellKey)) {
+          // Review mode — show question and answer, no scoring
+          openQuestion(cat, qKey, val, cellKey, true);
+        } else {
+          openQuestion(cat, qKey, val, cellKey, false);
+        }
       };
-      board.appendChild(cell);
+      col.appendChild(cell);
     });
+
+    board.appendChild(col);
   });
 }
 
-function openQuestion(cat, val, key) {
-  currentQ = { cat, val, key };
-  const q = QUESTIONS[cat][val];
+function openQuestion(cat, qKey, val, cellKey, reviewMode) {
+  currentQ = reviewMode ? null : { cat, val, key: cellKey };
+  const q = QUESTIONS[cat][qKey];
   document.getElementById('modal-category').textContent = cat;
   document.getElementById('modal-amount').textContent = `$${val}`;
-  document.getElementById('modal-question').textContent = q.q;
+
+  const questionEl = document.getElementById('modal-question');
+  if (q.image) {
+    questionEl.innerHTML = `
+      <div style="margin-bottom:16px">${q.q}</div>
+      <img src="${q.image}" style="max-height:45vh; max-width:100%; border-radius:12px; object-fit:contain;" />
+    `;
+  } else if (q.audio) {
+    questionEl.innerHTML = `
+      ${q.q}<br><br>
+      <button class="modal-btn btn-reveal" onclick="this.nextElementSibling.play(); this.textContent='🔊 Playing...'" style="font-size:20px;">
+        🎵 Play Snippet
+      </button>
+      <audio src="${q.audio}" preload="auto"></audio>
+    `;
+  } else {
+    questionEl.textContent = q.q;
+  }
 
   const ansEl = document.getElementById('modal-answer');
   ansEl.textContent = q.a;
-  ansEl.classList.remove('show');
 
-  const actions = document.getElementById('modal-actions');
-  actions.innerHTML = `
-    <button class="modal-btn btn-reveal" onclick="revealAnswer()">💜 Reveal Answer</button>
-    <button class="modal-btn btn-close" onclick="closeModal()">Close</button>
-  `;
+  if (reviewMode) {
+    ansEl.classList.add('show');
+    document.getElementById('modal-actions').innerHTML = `
+      <button class="modal-btn btn-close" onclick="closeModal()">Close</button>
+    `;
+  } else {
+    ansEl.classList.remove('show');
+    document.getElementById('modal-actions').innerHTML = `
+      <button class="modal-btn btn-reveal" onclick="revealAnswer()">Reveal Answer</button>
+      <button class="modal-btn btn-close" onclick="closeModal()">Close</button>
+    `;
+  }
 
   document.getElementById('modal').classList.add('show');
 }
@@ -469,15 +605,25 @@ function revealAnswer() {
   document.getElementById('modal-answer').classList.add('show');
   const actions = document.getElementById('modal-actions');
   actions.innerHTML = `
-    ${teams.map((t, i) => `<button class="modal-btn btn-award" onclick="awardPoints(${i})">🏆 ${t.name}</button>`).join('')}
+    ${teams.map((t, i) => `<button class="modal-btn btn-award" data-team="${i}" onclick="toggleTeam(this)">${t.name}</button>`).join('')}
+    <button class="modal-btn btn-reveal" onclick="awardSelected()">Award Points</button>
     <button class="modal-btn btn-close" onclick="closeModal()">No one got it</button>
   `;
 }
 
-function awardPoints(teamIdx) {
-  teams[teamIdx].score += currentQ.val;
-  document.getElementById(`score-${teamIdx}`).textContent = `$${teams[teamIdx].score}`;
-  pulseTeam(teamIdx);
+function toggleTeam(btn) {
+  btn.classList.toggle('selected');
+}
+
+function awardSelected() {
+  const selected = document.querySelectorAll('.btn-award.selected');
+  if (selected.length === 0) { closeModal(); return; }
+  selected.forEach(btn => {
+    const idx = parseInt(btn.dataset.team);
+    teams[idx].score += currentQ.val;
+    document.getElementById(`score-${idx}`).textContent = `$${teams[idx].score}`;
+    pulseTeam(idx);
+  });
   launchConfetti();
   closeModal();
 }
