@@ -493,11 +493,11 @@ QUESTIONS['T-wizzle or T-swizzle'][300] = { q: 'Taiwan is the world\'s leading p
 QUESTIONS['T-wizzle or T-swizzle'][400] = { q: 'Taylor Swift became the first artist to simultaneously hold the top 10 spots on the Billboard Hot 100. Which album caused this chart sweep?', a: 'Midnights (2022)' };
 QUESTIONS['T-wizzle or T-swizzle'][500] = { q: 'Taylor Swift holds the record for the most Grammy Awards won by any artist in history. How many Grammys does she currently hold?', a: '14' };
 
-QUESTIONS['Young$ Kim'][100] = { q: 'What is the month and year that Josh and Iri met?', a: '[Josh\'s video answer]' };
-QUESTIONS['Young$ Kim'][200] = { q: 'What is Iri\'s favorite food that Josh cooks for her?', a: '[Josh\'s video answer]' };
-QUESTIONS['Young$ Kim'][300] = { q: 'What\'s the first thing Josh noticed about Iri when they met?', a: '[Josh\'s video answer]' };
-QUESTIONS['Young$ Kim'][400] = { q: 'What is Josh\'s favorite quality or characteristic about Iri?', a: '[Josh\'s video answer]' };
-QUESTIONS['Young$ Kim'][500] = { q: 'If Josh could relive one day with Iri, which day would he pick?', a: '[Josh\'s video answer]' };
+QUESTIONS['Young$ Kim'][100] = { q: 'What is the month and year that Josh and Iri met?', a: '<video src="100.MP4" controls style="max-width:100%;max-height:60vh;"></video>' };
+QUESTIONS['Young$ Kim'][200] = { q: 'What is Iri\'s favorite food that Josh cooks for her?', a: '<video src="200.MP4" controls style="max-width:100%;max-height:60vh;"></video>' };
+QUESTIONS['Young$ Kim'][300] = { q: 'What\'s the first thing Josh noticed about Iri when they met?', a: '<video src="300.MP4" controls style="max-width:100%;max-height:60vh;"></video>' };
+QUESTIONS['Young$ Kim'][400] = { q: 'What is Josh\'s favorite quality or characteristic about Iri?', a: '<video src="400.MP4" controls style="max-width:100%;max-height:60vh;"></video>' };
+QUESTIONS['Young$ Kim'][500] = { q: 'If Josh could relive one day with Iri, which day would he pick?', a: '<video src="500.MP4" controls style="max-width:100%;max-height:60vh;"></video>' };
 
 QUESTIONS['Jinjar (진짜)'][100] = { q: 'What river runs through the center of Paris?', a: 'The Seine' };
 QUESTIONS['Jinjar (진짜)'][200] = { q: 'Who is the Miami Heat\'s all-time leading scorer?', a: 'Dwyane Wade' };
@@ -607,7 +607,7 @@ function openQuestion(cat, qKey, val, cellKey, reviewMode) {
   }
 
   const ansEl = document.getElementById('modal-answer');
-  ansEl.textContent = q.a;
+  ansEl.innerHTML = q.a;
 
   if (reviewMode) {
     ansEl.classList.add('show');
